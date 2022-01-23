@@ -1,18 +1,18 @@
 <template>
     <div class="header">
         <div>
-            <label>图片在线地址</label>
+            <label>image url: </label>
             <input v-model="imageUrl" />
         </div>
-        <button @click="generator">生成</button>
+        <button @click="generateFromUrl">generate</button>
     </div>
     <div class="header">
         <div>
-            <label>本地上传图片</label>
+            <label>upload file: </label>
             <input type="file" @change="handleFile" />
         </div>
-        <button @click="generatorFromFile">文件生成</button>
     </div>
+    <img :src="dataURL" class="image-preview" />
     <div class="preview">
         <div class="preview-content">
             <span class="headline2">Your Theme</span>
@@ -78,7 +78,7 @@
 </template>
 <script>
 import generatePalleteFromURL from "./core";
-import { fileToBuffer } from "./utils";
+import { fileToDataURL } from "./utils";
 export default {
     data() {
         return {
@@ -87,23 +87,31 @@ export default {
             light: {},
             dark: {},
             more: [],
-            imageUrl: 'https://files.catbox.moe/i6q1uk.png',
+            imageUrl: 'https://files.catbox.moe/g2lwbi.jpg',
+            dataURL: '',
         }
     },
     created() {
-        this.generator()
+        this.generateFromUrl()
     },
     methods: {
-        async generatorFromFile() {
-            const [file] = this.fileList
-            const arraybuffer = await fileToBuffer(file)
-            const palleteinstance = await generatePalleteFromURL(arraybuffer)
-            this.handleResult(palleteinstance.save())
-        },
-        handleFile(e) {
+        async handleFile(e) {
             const { files } = e.target
             console.log(files)
             this.fileList = [...files]
+            const URL = await fileToDataURL(files[0])
+            this.dataURL = URL
+            this.generate()
+        },
+        async generateFromUrl() {
+            this.dataURL = this.imageUrl
+            this.generate()
+        },
+        async generate() {
+            if (!this.dataURL) return;
+            const url = this.dataURL;
+            const palleteinstance = await generatePalleteFromURL(url)
+            this.handleResult(palleteinstance.save())
         },
         handleResult(pallete) {
         this.pallete = pallete
@@ -324,12 +332,6 @@ export default {
                 ['Neutral Variant']: to(pallete.neutralVariant),
             }
         },
-        async generator() {
-            if (!this.imageUrl) return;
-            const url = this.imageUrl;
-            const palleteinstance = await generatePalleteFromURL(url)
-            this.handleResult(palleteinstance.save())
-        },
     }
 }
 </script>
@@ -339,6 +341,9 @@ export default {
     justify-content: center;
     gap: 20px;
     margin-bottom: 20px;
+}
+.image-preview {
+    max-height: 200px;
 }
 .priview {
     flex: 8 1 0%;

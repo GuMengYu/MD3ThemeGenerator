@@ -13,6 +13,19 @@ export function fileToBuffer(file) {
     })
 }
 
+export function fileToDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            resolve( e.target.result)
+        }
+        try {
+            reader.readAsDataURL(file)
+        } catch(e) {
+            reject(e)
+        }
+    })
+}
 export function imageToDataUrl(image) {
     const canvas = document.createElement('canvas');
     canvas.width = image.width;
