@@ -77,7 +77,7 @@
     </div>
 </template>
 <script>
-import generatePalleteFromURL from "./core";
+import { generatePaletteFromURL } from 'theme-generator'
 import { fileToDataURL } from "./utils";
 export default {
     data() {
@@ -110,7 +110,7 @@ export default {
         async generate() {
             if (!this.dataURL) return;
             const url = this.dataURL;
-            const palleteinstance = await generatePalleteFromURL(url)
+            const palleteinstance = await generatePaletteFromURL(url)
             this.handleResult(palleteinstance.save())
         },
         handleResult(pallete) {
