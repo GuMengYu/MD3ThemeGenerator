@@ -77,7 +77,7 @@
     </div>
 </template>
 <script>
-import { generatePaletteFromURL } from 'theme-generator'
+import { generatePaletteFromURL } from 'md3-theme-generator'
 import { fileToDataURL } from "./utils";
 export default {
     data() {
